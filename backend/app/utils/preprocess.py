@@ -1,21 +1,19 @@
-import joblib
 import numpy as np
+import joblib
+import pandas as pd
+import os
 
-# Load scaler & features
-scaler = joblib.load("app/model/scaler.pkl")
-selected_features = joblib.load("app/model/features.pkl")
+MODEL_DIR = "model/"
 
-def preprocess_input(data: dict):
+scaler = joblib.load(os.path.join(MODEL_DIR, "scaler.pkl"))
+features = joblib.load(os.path.join(MODEL_DIR, "features.pkl"))
+
+
+def preprocess_dummy_input():
     """
-    Converts incoming JSON to model-ready numpy array.
+    This function PREPARES dummy values because you are not passing
+    tabular inputs from frontend yet.
     """
-    processed = []
-
-    for feature in selected_features:
-        processed.append(float(data.get(feature, 0)))  # default 0
-
-    processed = np.array(processed).reshape(1, -1)
-
-    # Scale
-    processed = scaler.transform(processed)
-    return processed
+    df = pd.DataFrame([[0] * len(features)], columns=features)
+    scaled = scaler.transform(df)
+    return scaled
